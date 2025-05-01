@@ -25,7 +25,7 @@ func CheckPasswordHash(password string, hash string) bool {
 	return err == nil
 }
 
-// ValidatePassword checks password complexity requirements
+// ValidatePassword checks password complexity requirements.
 // Rules:
 //
 //	min: 8; max: 64

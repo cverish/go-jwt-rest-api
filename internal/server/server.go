@@ -15,6 +15,8 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
+// NewHttpServer takes in the app config and database, sets up app-level middleware,
+// and returns the API http server.
 func NewHttpServer(cfg *config.Config, db *database.Database) *http.Server {
 	if cfg.Environment == "production" {
 		gin.SetMode(gin.ReleaseMode)
@@ -31,16 +33,22 @@ func NewHttpServer(cfg *config.Config, db *database.Database) *http.Server {
 				c.Redirect(http.StatusMovedPermanently, "/docs/index.html")
 				return
 			}
-			ginSwagger.WrapHandler(swaggerFiles.Handler, ginSwagger.URL(cfg.API.BasePath+"/docs/doc.json"), ginSwagger.DefaultModelsExpandDepth(2))(c)
+			ginSwagger.WrapHandler(
+				swaggerFiles.Handler,
+				ginSwagger.URL(cfg.API.BasePath+"/docs/doc.json"),
+				ginSwagger.DefaultModelsExpandDepth(2),
+			)(c)
 		})
 	}
 
+	// attach CORS and Security middleware to all routes
 	r.Use(middleware.CorsMiddleware())
-	r.Use(middleware.SecurityMiddleware(cfg.Environment == "local"))
+	r.Use(middleware.SecurityMiddleware(cfg.IsDev))
 
 	// attach health route
 	apiGroup.GET("/health", handlers.HealthHandler)
 
+	// attach router groups
 	routers.AttachAuthRouterGroup(cfg, db, apiGroup)
 	routers.AttachUserRouterGroup(cfg, db, apiGroup)
 	routers.AttachAdminRouterGroup(cfg, db, apiGroup)

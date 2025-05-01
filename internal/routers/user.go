@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// AttachUserRouterGroup attaches the routes and middleware associated with users.
 func AttachUserRouterGroup(cfg *config.Config, db *database.Database, router *gin.RouterGroup) {
 	userHandler := handlers.NewUserHandler(db)
 

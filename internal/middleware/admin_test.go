@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/cverish/go-jwt-rest-api/internal/database"
-	"github.com/cverish/go-jwt-rest-api/testutils"
+	"github.com/cverish/go-jwt-rest-api/internal/testutils"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/require"
 )

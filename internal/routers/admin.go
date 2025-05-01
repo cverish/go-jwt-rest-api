@@ -8,6 +8,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// AttachAdminRouterGroup attaches the middleware and routes associated with admin authorization
+// to the gin router.
 func AttachAdminRouterGroup(cfg *config.Config, db *database.Database, router *gin.RouterGroup) {
 	adminHandler := handlers.NewAdminHandler(db)
 

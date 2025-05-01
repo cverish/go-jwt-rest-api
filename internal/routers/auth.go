@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// AttachAuthRouterGroup attaches the routes and middleware associated with authentication.
 func AttachAuthRouterGroup(cfg *config.Config, db *database.Database, router *gin.RouterGroup) {
 	authHandler := handlers.NewAuthHandler(db, cfg)
 
