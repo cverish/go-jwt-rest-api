@@ -24,6 +24,7 @@ func NewHttpServer(cfg *config.Config, db *database.Database) *http.Server {
 
 	r := gin.Default()
 	apiGroup := r.Group(cfg.API.BasePath)
+	apiGroup.Use(middleware.RateLimiterMiddleware())
 
 	// attach docs before middleware if in dev
 	if cfg.IsDev {
@@ -42,8 +43,8 @@ func NewHttpServer(cfg *config.Config, db *database.Database) *http.Server {
 	}
 
 	// attach CORS and Security middleware to all routes
-	r.Use(middleware.CorsMiddleware())
-	r.Use(middleware.SecurityMiddleware(cfg.IsDev))
+	apiGroup.Use(middleware.CorsMiddleware())
+	apiGroup.Use(middleware.SecurityMiddleware(cfg.IsDev))
 
 	// attach health route
 	apiGroup.GET("/health", handlers.HealthHandler)

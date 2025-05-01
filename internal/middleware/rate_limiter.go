@@ -8,8 +8,9 @@ import (
 	"golang.org/x/time/rate"
 )
 
-// RateLimiter middleware to prevent brute force attacks
-func RateLimiter() gin.HandlerFunc {
+// RateLimiterMiddleware middleware prevents brute force attacks
+// by limiting the number of requests to 10 per second.
+func RateLimiterMiddleware() gin.HandlerFunc {
 	limiter := rate.NewLimiter(rate.Every(time.Second), 10)
 	return func(c *gin.Context) {
 		if !limiter.Allow() {
