@@ -17,8 +17,16 @@ func TestCorsMiddleware(t *testing.T) {
 		CorsMiddleware()(c)
 
 		require.Equal(t, c.Writer.Header().Get("Access-Control-Allow-Origin"), "localhost")
-		require.Equal(t, c.Writer.Header().Get("Access-Control-Allow-Methods"), "POST, GET, OPTIONS, PUT, DELETE")
-		require.Equal(t, c.Writer.Header().Get("Access-Control-Allow-Headers"), "Content-Type, Authorization, Cookie")
+		require.Equal(
+			t,
+			c.Writer.Header().Get("Access-Control-Allow-Methods"),
+			"POST, GET, OPTIONS, PUT, DELETE",
+		)
+		require.Equal(
+			t,
+			c.Writer.Header().Get("Access-Control-Allow-Headers"),
+			"Content-Type, Authorization, Cookie",
+		)
 	})
 
 	t.Run("OPTIONS method aborts", func(t *testing.T) {

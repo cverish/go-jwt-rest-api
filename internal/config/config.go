@@ -75,10 +75,14 @@ func Load(envpath string) (*Config, error) {
 	// JWT Config
 	cfg.JWT.AccessTokenKey = "access_token"
 	cfg.JWT.AccessTokenSecret = getEnv("JWT_TOKEN_SECRET", "your-secret-key")
-	cfg.JWT.AccessTokenExpiry = stringToDuration(getEnv("JWT_TOKEN_EXPIRY_MINUTES", "10")) * time.Minute
+	cfg.JWT.AccessTokenExpiry = stringToDuration(
+		getEnv("JWT_TOKEN_EXPIRY_MINUTES", "10"),
+	) * time.Minute
 	cfg.JWT.RefreshTokenKey = "refresh_token"
 	cfg.JWT.RefreshTokenSecret = getEnv("JWT_REFRESH_SECRET", "your-secret-refresh-key")
-	cfg.JWT.RefreshTokenExpiry = stringToDuration(getEnv("JWT_REFRESH_EXPIRY_DAYS", "7")) * time.Hour * 24
+	cfg.JWT.RefreshTokenExpiry = stringToDuration(
+		getEnv("JWT_REFRESH_EXPIRY_DAYS", "7"),
+	) * time.Hour * 24
 	cfg.JWT.BackendRefresh = getEnv("JWT_BACKEND_REFRESH", "false") == "true"
 	cfg.JWT.CookieDomain = getEnv("JWT_COOKIE_DOMAIN", "localhost")
 

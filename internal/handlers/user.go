@@ -36,7 +36,10 @@ func (h *UserHandler) Register(c *gin.Context) {
 		return
 	}
 
-	credentials := &models.UserLogin{Email: registrationInfo.Email, Password: registrationInfo.Password}
+	credentials := &models.UserLogin{
+		Email:    registrationInfo.Email,
+		Password: registrationInfo.Password,
+	}
 
 	// find invited user that matches user register information
 	invitedUser, err := h.db.GetInvitedUserByCredentials(credentials)

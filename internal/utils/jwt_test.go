@@ -23,7 +23,8 @@ func TestGenerateTokenString(t *testing.T) {
 		"iat":     now.Unix(),
 		"exp":     now.Add(jwtExpiration).Unix(),
 	}
-	expected_token, _ := jwt.NewWithClaims(jwt.SigningMethodHS256, expected_claims).SignedString(jwtSecret)
+	expected_token, _ := jwt.NewWithClaims(jwt.SigningMethodHS256, expected_claims).
+		SignedString(jwtSecret)
 
 	t.Run("Token generates without error", func(t *testing.T) {
 		res, err := GenerateTokenString(jwtSecret, jwtExpiration, now, userId, email, role)
@@ -39,7 +40,10 @@ func TestGenerateTokenString(t *testing.T) {
 	t.Run("Expected claims added to token", func(t *testing.T) {
 		res, _ := GenerateTokenString(jwtSecret, jwtExpiration, now, userId, email, role)
 
-		token, _ := jwt.Parse(res, func(token *jwt.Token) (interface{}, error) { return jwtSecret, nil })
+		token, _ := jwt.Parse(
+			res,
+			func(token *jwt.Token) (interface{}, error) { return jwtSecret, nil },
+		)
 		claims, _ := token.Claims.(jwt.MapClaims)
 
 		require.Equal(t, claims["user_id"], userId, "user ID should be equal")
@@ -63,7 +67,8 @@ func TestGetTokenClaims(t *testing.T) {
 		"iat":     now.Unix(),
 		"exp":     now.Add(jwtExpiration).Unix(),
 	}
-	expected_token, _ := jwt.NewWithClaims(jwt.SigningMethodHS256, expected_claims).SignedString(jwtSecret)
+	expected_token, _ := jwt.NewWithClaims(jwt.SigningMethodHS256, expected_claims).
+		SignedString(jwtSecret)
 
 	t.Run("token claims should be returned", func(t *testing.T) {
 		token_claims, err := GetTokenClaims(expected_token, jwtSecret)
@@ -80,7 +85,8 @@ func TestGetTokenClaims(t *testing.T) {
 	})
 
 	t.Run("error should be returned if incorrect signing method", func(t *testing.T) {
-		token, _ := jwt.NewWithClaims(jwt.SigningMethodES256, expected_claims).SignedString(jwtSecret)
+		token, _ := jwt.NewWithClaims(jwt.SigningMethodES256, expected_claims).
+			SignedString(jwtSecret)
 		token_claims, err := GetTokenClaims(token, jwtSecret)
 
 		require.Nil(t, token_claims, "token claims should be nil")

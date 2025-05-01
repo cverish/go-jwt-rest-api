@@ -45,31 +45,61 @@ func TestValidatePassword(t *testing.T) {
 
 	t.Run("Password is too short", func(t *testing.T) {
 		pw := "Short!1"
-		require.Errorf(t, ValidatePassword(pw), "password must be at least 8 characters", "should return err")
+		require.Errorf(
+			t,
+			ValidatePassword(pw),
+			"password must be at least 8 characters",
+			"should return err",
+		)
 	})
 
 	t.Run("Password is too long", func(t *testing.T) {
 		pw := "A_password_with_more_than_72_characters_it_is_very_very_long_as_you_can_see!"
-		require.Errorf(t, ValidatePassword(pw), "password must be fewer than 64 characters", "should return err")
+		require.Errorf(
+			t,
+			ValidatePassword(pw),
+			"password must be fewer than 64 characters",
+			"should return err",
+		)
 	})
 
 	t.Run("Password does not contain uppercase character", func(t *testing.T) {
 		pw := "a_lowercase123!"
-		require.Errorf(t, ValidatePassword(pw), "password must contain at least one uppercase character", "should return err")
+		require.Errorf(
+			t,
+			ValidatePassword(pw),
+			"password must contain at least one uppercase character",
+			"should return err",
+		)
 	})
 
 	t.Run("Password does not contain lowercase character", func(t *testing.T) {
 		pw := "AN_UPPERCASE123!"
-		require.Errorf(t, ValidatePassword(pw), "password must contain at least one lowercase character", "should return err")
+		require.Errorf(
+			t,
+			ValidatePassword(pw),
+			"password must contain at least one lowercase character",
+			"should return err",
+		)
 	})
 
 	t.Run("Password does not contain digit", func(t *testing.T) {
 		pw := "No_digits!"
-		require.Errorf(t, ValidatePassword(pw), "password must contain at least one digit", "should return err")
+		require.Errorf(
+			t,
+			ValidatePassword(pw),
+			"password must contain at least one digit",
+			"should return err",
+		)
 	})
 
 	t.Run("Password does not contain special character", func(t *testing.T) {
 		pw := "Nospecialchars1"
-		require.Errorf(t, ValidatePassword(pw), "password must contain at least one special character", "should return err")
+		require.Errorf(
+			t,
+			ValidatePassword(pw),
+			"password must contain at least one special character",
+			"should return err",
+		)
 	})
 }

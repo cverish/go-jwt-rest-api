@@ -49,7 +49,9 @@ func ValidatePassword(password string) error {
 	if digitRegex := regexp.MustCompile(`.*?[0-9]`); !digitRegex.MatchString(password) {
 		return errors.New("password must contain at least one digit")
 	}
-	if specialCharRegex := regexp.MustCompile(`.*?[#?!@$%^&*-]`); !specialCharRegex.MatchString(password) {
+	if specialCharRegex := regexp.MustCompile(`.*?[#?!@$%^&*-]`); !specialCharRegex.MatchString(
+		password,
+	) {
 		return errors.New("password must contain at least one special character")
 	}
 	return nil

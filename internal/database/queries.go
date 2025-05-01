@@ -110,7 +110,9 @@ func (db *Database) GetUserByCredentials(login *models.UserLogin) (*models.User,
 }
 
 // get an invited user by their credentials
-func (db *Database) GetInvitedUserByCredentials(login *models.UserLogin) (*models.InvitedUser, error) {
+func (db *Database) GetInvitedUserByCredentials(
+	login *models.UserLogin,
+) (*models.InvitedUser, error) {
 	invitedUser, err := db.GetInvitedUserByEmail(login.Email)
 
 	if err != nil {
@@ -183,7 +185,9 @@ func (db *Database) UpdateInvitedUser(invitedUser *models.InvitedUser) error {
 
 // update user's password
 // returns bool (valid credentials), bool (successful change), err (server error)
-func (db *Database) UpdateUserPassword(passwordChange *models.UserPasswordChange) (bool, bool, error) {
+func (db *Database) UpdateUserPassword(
+	passwordChange *models.UserPasswordChange,
+) (bool, bool, error) {
 	login := &models.UserLogin{Email: passwordChange.Email, Password: passwordChange.Password}
 	user, err := db.GetUserByCredentials(login)
 

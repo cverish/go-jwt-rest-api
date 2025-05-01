@@ -11,7 +11,14 @@ import (
 
 // GenerateTokenString generates the JWT token from the secret, expiration,
 // and user-specific values to add to claims.
-func GenerateTokenString(jwtSecret []byte, jwtExpiration time.Duration, now time.Time, userId string, email string, role string) (string, error) {
+func GenerateTokenString(
+	jwtSecret []byte,
+	jwtExpiration time.Duration,
+	now time.Time,
+	userId string,
+	email string,
+	role string,
+) (string, error) {
 	claims := jwt.MapClaims{
 		"user_id": userId,
 		"email":   email,
@@ -58,7 +65,13 @@ func GetTokenClaims(tokenString string, jwtSecret []byte) (jwt.MapClaims, error)
 }
 
 // SetToken sets the given tokenName in the gin context with the given accessToken and expiry values
-func SetToken(c *gin.Context, cfg *config.Config, tokenName string, accessToken string, expiry time.Duration) {
+func SetToken(
+	c *gin.Context,
+	cfg *config.Config,
+	tokenName string,
+	accessToken string,
+	expiry time.Duration,
+) {
 	c.SetCookie(
 		tokenName,
 		accessToken,

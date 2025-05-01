@@ -42,7 +42,7 @@ type StatusOKList struct {
 
 type StatusCreated struct {
 	Message string `json:"message" example:"created successfully"`
-	ID      string `json:"id" example:"id-of-created-object"`
+	ID      string `json:"id"      example:"id-of-created-object"`
 } //@name http.StatusCreated
 
 type StatusError struct {
