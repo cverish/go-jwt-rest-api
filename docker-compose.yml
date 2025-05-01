@@ -1,7 +1,7 @@
 services:
   db:
     env_file: ".env"
-    image: postgres:14
+    image: postgres:15
     container_name: go-jwt-rest-api-db
     restart: always
     ports:

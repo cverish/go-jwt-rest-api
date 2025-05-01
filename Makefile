@@ -31,7 +31,7 @@ db-upgrade:  ## migrate the database using the generated atlas migration file
 	atlas migrate apply --dir "file://internal/database/migrations" --url "postgresql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}?sslmode=${DB_SSLMODE}"
 
 db-downgrade:  ## downgrade the database using the generated atlas migration file
-	atlas migrate down --dev-url="docker://postgres/14/dev" --dir "file://internal/database/migrations" --url "postgresql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}?sslmode=${DB_SSLMODE}"
+	atlas migrate down --dev-url="docker://postgres/15/dev" --dir "file://internal/database/migrations" --url "postgresql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}?sslmode=${DB_SSLMODE}"
 
 db-terminal:  ## open a psql terminal in the runniing docker container
 	docker exec -it go-jwt-rest-api-db psql -d ${DB_NAME} -U ${DB_USER}
