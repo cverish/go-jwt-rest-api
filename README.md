@@ -23,6 +23,11 @@ It contains routes for creating invitations, user registration, authentication,
 and user modification/deletion.
 Access to routes is dependent on (a) authentication status and (b) role-based authorization.
 
+Authorization is handled via JWT access and refresh tokens saved within the client's cookies.
+The cookies are set to `HTTPOnly` and `Secure`, with the `Domain` specified, to increase security.
+When the access token is refreshed with the refresh token, the user's authorization is confirmed
+before new cookies are issued. All passwords are stored as hashes in the database.
+
 You'll first need to create an admin user using the `/api/v1/admin/manage/create-initial-admin` endpoint.
 Once a user has been created, this endpoint will no longer allow for creation of an admin user.
 You can then log in as the admin at `/api/v1/auth/login`.
@@ -70,8 +75,10 @@ If it has, the user is logged out and will have to log back in.
 
 ## dependencies
 
-- Docker and Docker Compose
-- Go v1.24.2
+- Docker and Docker Compose (installed via 
+[installer](https://docs.docker.com/get-started/get-docker/))
+- Go v1.24.2 (installed via `brew install go`)
+- Atlas (installed via `brew install atlas`)
 
 ## development
 

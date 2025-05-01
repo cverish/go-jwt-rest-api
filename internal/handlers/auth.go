@@ -23,18 +23,22 @@ func NewAuthHandler(db *database.Database, cfg *config.Config) *AuthHandler {
 	}
 }
 
-// Login godoc
-// @Summary login registered user
-// @Description Logs in user with given email and password.
-// @Description
-// @Description On success, returns status code 200 and sends back HTTPOnly access and refresh tokens.
-// @Tags auth
-// @Param loginInfo body models.UserLogin true "Login info"
-// @Success 200 {object} StatusOK "Successful Response"
-// @Failure 400 {object} StatusError "Status Bad Request"
-// @Failure 401 {object} StatusError "Status Unauthorized"
-// @Failure 500 {object} StatusError "Status Internal Server Error"
-// @Router /auth/login [post]
+// Login takes in a gin context, binds the request body to a UserLogin,
+// validates the credentials, and generates access_token and refresh_token.
+//
+// Swagger doc autogeneration tags:
+//
+//	@Summary login registered user
+//	@Description Logs in user with given email and password.
+//	@Description
+//	@Description On success, returns status code 200 and sends back HTTPOnly access and refresh tokens.
+//	@Tags auth
+//	@Param loginInfo body models.UserLogin true "Login info"
+//	@Success 200 {object} StatusOK "Successful Response"
+//	@Failure 400 {object} StatusError "Status Bad Request"
+//	@Failure 401 {object} StatusError "Status Unauthorized"
+//	@Failure 500 {object} StatusError "Status Internal Server Error"
+//	@Router /auth/login [post]
 func (h *AuthHandler) Login(c *gin.Context) {
 	var login models.UserLogin
 
@@ -80,16 +84,21 @@ func (h *AuthHandler) Login(c *gin.Context) {
 	models.ResponseOK(c, "access_token and refresh_token cookies returned")
 }
 
-// ChangePassword godoc
-// @Summary change user password
-// @Description Given correct login information, allow user to change their password.
-// @Tags auth
-// @Param changeLoginInfo body models.UserPasswordChange true "New login info"
-// @Success 200 {object} StatusOK "Successful Response"
-// @Failure 401 {object} StatusError "Status Unauthorized"
-// @Failure 500 {object} StatusError "Status Internal Server Error"
-// @Security UserAccessCookie
-// @Router /auth/change-password [post]
+// ChangePassword takes in a gin context, binds the request body to a UserPasswordChange,
+// checks the user's original credentials, validates the new password, and changes
+// the user's credentials.
+//
+// Swagger doc autogeneration tags:
+//
+//	@Summary change user password
+//	@Description Given correct login information, allow user to change their password.
+//	@Tags auth
+//	@Param changeLoginInfo body models.UserPasswordChange true "New login info"
+//	@Success 200 {object} StatusOK "Successful Response"
+//	@Failure 401 {object} StatusError "Status Unauthorized"
+//	@Failure 500 {object} StatusError "Status Internal Server Error"
+//	@Security UserAccessCookie
+//	@Router /auth/change-password [post]
 func (h *AuthHandler) ChangePassword(c *gin.Context) {
 	var passwordChange models.UserPasswordChange
 
@@ -113,18 +122,22 @@ func (h *AuthHandler) ChangePassword(c *gin.Context) {
 	models.ResponseOK(c, "password updated successfully")
 }
 
-// RefreshToken godoc
-// @Summary refresh access token from refresh token
-// @Description Reads the user's refresh_token cookie and sends back a new access_token.
-// @Description
-// @Description Not allowed if tokens are refreshed on the backend (`JWT_BACKEND_REFRESH` environment variable).
-// @Tags auth
-// @Success 200 {object} StatusOK "Successful Response"
-// @Failure 401 {object} StatusError "Status Unauthorized"
-// @Failure 404 {object} StatusError "Status Not Found"
-// @Failure 500 {object} StatusError "Status Internal Server Error"
-// @Security UserAccessCookie
-// @Router /auth/refresh-token [post]
+// RefreshToken takes in a gin context, checks the validity of the user's refresh_token,
+// checks the user's authorization, and generates a new access_token.
+//
+// Swagger doc autogeneration tags:
+//
+//	@Summary refresh access token from refresh token
+//	@Description Reads the user's refresh_token cookie and sends back a new access_token.
+//	@Description
+//	@Description Not allowed if tokens are refreshed on the backend (`JWT_BACKEND_REFRESH` environment variable).
+//	@Tags auth
+//	@Success 200 {object} StatusOK "Successful Response"
+//	@Failure 401 {object} StatusError "Status Unauthorized"
+//	@Failure 404 {object} StatusError "Status Not Found"
+//	@Failure 500 {object} StatusError "Status Internal Server Error"
+//	@Security UserAccessCookie
+//	@Router /auth/refresh-token [post]
 func (h *AuthHandler) RefreshToken(c *gin.Context) {
 	if h.cfg.JWT.BackendRefresh {
 		models.ResponseNotFound(c, "404 page not found")
@@ -176,13 +189,16 @@ func (h *AuthHandler) RefreshToken(c *gin.Context) {
 	models.ResponseOK(c, "access_token refreshed successfully")
 }
 
-// Logout godoc
-// @Summary logout
-// @Description Logs out user by removing access_token and refresh_token cookies
-// @Tags auth
-// @Success 200 {object} StatusOK "Successful Response"
-// @Security UserAccessCookie
-// @Router /auth/logout [post]
+// Logout takes in a gin context and revokes the access_token and refresh_token.
+//
+// Swagger doc autogeneration tags:
+//
+//	@Summary logout
+//	@Description Logs out user by removing access_token and refresh_token cookies
+//	@Tags auth
+//	@Success 200 {object} StatusOK "Successful Response"
+//	@Security UserAccessCookie
+//	@Router /auth/logout [post]
 func (h *AuthHandler) Logout(c *gin.Context) {
 	utils.RevokeTokens(c, h.cfg)
 	models.ResponseOK(c, "logged out successfully")

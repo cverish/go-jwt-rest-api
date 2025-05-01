@@ -9,7 +9,7 @@ import (
 )
 
 // AdminMiddleware verifies that user is an admin via the database
-// if the are no longer an admin, revoke their tokens and force login
+// if the are no longer an admin, revoke their tokens and force login.
 func AdminMiddleware(cfg *config.Config, db *database.Database) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// check role from the jwt

@@ -11,7 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// AuthMiddleware verifies JWT tokens in incoming requests
+// AuthMiddleware verifies JWT tokens in incoming requests.
 func AuthMiddleware(cfg *config.Config, db *database.Database) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		cookie, err := c.Cookie(cfg.JWT.AccessTokenKey)
@@ -48,15 +48,22 @@ func AuthMiddleware(cfg *config.Config, db *database.Database) gin.HandlerFunc {
 	}
 }
 
+// refreshAccessToken checks the validity of the refresh token and
+// issues a new access token if refresh token is valid.
+//
+// Returns:
+//
+//	nil: success
+//	error: invalid token or other error
 func refreshAccessToken(cfg *config.Config, db *database.Database, c *gin.Context) error {
 	// check refresh token
-	refresh_cookie, err := c.Cookie(cfg.JWT.RefreshTokenKey)
+	refreshCookie, err := c.Cookie(cfg.JWT.RefreshTokenKey)
 	if err != nil {
 		return err
 	}
 
 	// extract claims
-	claims, err := utils.GetTokenClaims(refresh_cookie, []byte(cfg.JWT.RefreshTokenSecret))
+	claims, err := utils.GetTokenClaims(refreshCookie, []byte(cfg.JWT.RefreshTokenSecret))
 	if err != nil {
 		return err
 	}

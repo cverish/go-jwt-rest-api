@@ -9,30 +9,30 @@ import (
 
 func TestHashPassword(t *testing.T) {
 	t.Run("Password hashes correctly", func(t *testing.T) {
-		hashed_pw, err := HashPassword("my-password")
-		require.NotEqual(t, hashed_pw, "", "hashed password should not be empty string")
+		hashedPassword, err := HashPassword("my-password")
+		require.NotEqual(t, hashedPassword, "", "hashed password should not be empty string")
 		require.Nil(t, err, "should not have an error")
 	})
 
 	t.Run("Password does not hash if too long", func(t *testing.T) {
-		long_pw := "a_password_with_more_than_72_characters_it_is_very_very_long_as_you_can_see"
-		hashed_pw, err := HashPassword(long_pw)
+		longPassword := "a_password_with_more_than_72_characters_it_is_very_very_long_as_you_can_see"
+		hashedPassword, err := HashPassword(longPassword)
 
-		require.Equal(t, hashed_pw, "", "hashed password should be empty")
+		require.Equal(t, hashedPassword, "", "hashed password should be empty")
 		require.Errorf(t, err, "password is too long", "should have error")
 	})
 }
 
 func TestCheckPasswordHash(t *testing.T) {
 	t.Run("Password hashes match", func(t *testing.T) {
-		hashed_pw, _ := bcrypt.GenerateFromPassword([]byte("my-password"), 12)
-		res := CheckPasswordHash("my-password", string(hashed_pw))
+		hashedPasssword, _ := bcrypt.GenerateFromPassword([]byte("my-password"), 12)
+		res := CheckPasswordHash("my-password", string(hashedPasssword))
 		require.True(t, res, "password hashes should match")
 	})
 
 	t.Run("Password hashes do not match", func(t *testing.T) {
-		hashed_pw, _ := bcrypt.GenerateFromPassword([]byte("my-password"), 12)
-		res := CheckPasswordHash("my-wrong-password", string(hashed_pw))
+		hashedPasssword, _ := bcrypt.GenerateFromPassword([]byte("my-password"), 12)
+		res := CheckPasswordHash("my-wrong-password", string(hashedPasssword))
 		require.False(t, res, "password hashes should not match")
 	})
 }

@@ -12,6 +12,8 @@ import (
 
 var envpath = flag.String("envpath", ".env", "path for desired environment file. default .env")
 
+// Main loads the config from the given env file, opens connection to the database,
+// and starts the server.
 func main() {
 	flag.Parse()
 

@@ -2,6 +2,7 @@ package models
 
 import "database/sql/driver"
 
+// User contains the information associated with a user.
 type User struct {
 	Base
 	// User's username
@@ -17,12 +18,14 @@ type User struct {
 	LastName string `json:"last_name"                                    binding:"required"       example:"LastName"`
 } //@name user.User
 
+// InvitedUser contains the information associated with an invited user.
 type InvitedUser struct {
 	Base
 	Email        string `json:"email" gorm:"uniqueIndex"                                binding:"required,email" example:"invited_user@example.com"`
 	PasswordHash string `json:"-"     gorm:"type:varchar(255);unique binding:omitempty"                                                             swaggerignore:"true"`
 } //@name user.InvitedUser
 
+// UserRegister contains the information associated with a user registration request.
 type UserRegister struct {
 	// Email of invited user, given when invited
 	Email string `json:"email"                binding:"required,email" example:"user@example.com"`
@@ -42,6 +45,7 @@ type UserRegister struct {
 	LastName string `json:"last_name"            binding:"required"       example:"LastName"`
 } //@name user.UserRegister
 
+// AdminRegister contains the information associated with an admin registration request.
 type AdminRegister struct {
 	// Chosen username
 	Username string `json:"username"   binding:"required"       example:"admin"`
@@ -56,6 +60,7 @@ type AdminRegister struct {
 	LastName string `json:"last_name"  binding:"required"       example:"LastName"`
 } //@name user.AdminRegister
 
+// Role is a user role enum. Available values: RoleAdmin ("admin") and RoleUser ("user")
 type Role string //@name user.RoleEnum
 
 const (
@@ -68,6 +73,7 @@ func (r *Role) Scan(value interface{}) error {
 	return nil
 }
 
+// String returns the string representation of a given Role.
 func (r Role) String() string {
 	return string(r)
 }

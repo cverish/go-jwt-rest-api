@@ -10,6 +10,8 @@ import (
 	"github.com/joho/godotenv"
 )
 
+// Config contains the app configuration data for the server, database,
+// api, jwt, and environment.
 type Config struct {
 	Server struct {
 		Port         string
@@ -46,6 +48,8 @@ type Config struct {
 	IsDev       bool
 }
 
+// Load loads in the environment variables from the given env file
+// and returns the app configuration.
 func Load(envpath string) (*Config, error) {
 	if _, err := os.Stat(envpath); err != nil {
 		return nil, err
@@ -92,6 +96,8 @@ func Load(envpath string) (*Config, error) {
 	return cfg, nil
 }
 
+// getEnv checks the environment variables for a given key and returns its value.
+// If not present, returns a default value.
 func getEnv(key, defaultValue string) string {
 	if value := os.Getenv(key); value != "" {
 		return value
@@ -99,6 +105,8 @@ func getEnv(key, defaultValue string) string {
 	return defaultValue
 }
 
+// stringToDuration takes in a string value that can be cast to an integer
+// (e.g. "24") and converts it to time.Duration.
 func stringToDuration(value string) time.Duration {
 	n, err := strconv.Atoi(value)
 	if err != nil {
@@ -107,6 +115,8 @@ func stringToDuration(value string) time.Duration {
 	return time.Duration(n)
 }
 
+// GetDSN reads the app config and returns a formatted string with the
+// DSN information for the database connection.
 func (c *Config) GetDSN() string {
 	return fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
 		c.Database.Host,

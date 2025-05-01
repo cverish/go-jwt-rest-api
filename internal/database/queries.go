@@ -6,7 +6,12 @@ import (
 	"gorm.io/gorm"
 )
 
-// get all users
+// GetAllUsers queries the database and returns a list of Users.
+//
+// Returns:
+//
+//	([]User, nil): success
+//	(nil, error): error
 func (db *Database) GetAllUsers() ([]models.User, error) {
 	var users []models.User
 
@@ -17,7 +22,12 @@ func (db *Database) GetAllUsers() ([]models.User, error) {
 	return users, nil
 }
 
-// get all invited users
+// GetAllInvitedUsers queries the database and returns a list of InvitedUsers.
+//
+// Returns:
+//
+//	([]InvitedUser, nil): success
+//	(nil, error): error
 func (db *Database) GetAllInvitedUsers() ([]models.InvitedUser, error) {
 	var invitedUsers []models.InvitedUser
 
@@ -28,13 +38,17 @@ func (db *Database) GetAllInvitedUsers() ([]models.InvitedUser, error) {
 	return invitedUsers, nil
 }
 
-// find user by given id
-// returns (nil, error) if server error, (nil, nil) if not found
+// GetUserById queries the database for a User with the given userId.
+//
+// Returns:
+//
+//	(*User, nil): found
+//	(nil, nil): not found
+//	(nil, error): server error
 func (db *Database) GetUserById(userId string) (*models.User, error) {
 	var user models.User
 
 	q := db.DB.Where("id = ?", userId).First(&user)
-
 	if q.Error == gorm.ErrRecordNotFound {
 		return nil, nil
 	} else if q.Error != nil {
@@ -44,13 +58,17 @@ func (db *Database) GetUserById(userId string) (*models.User, error) {
 	return &user, nil
 }
 
-// find invited user by given ID
-// returns (nil, error) if server error, (nil, nil) if not found
-func (db *Database) GetInvitedUserById(userId string) (*models.InvitedUser, error) {
+// GetInvitedUserById queries the database for an InvitedUser with the given invitedUserId.
+//
+// Returns:
+//
+//	(*InvitedUser, nil): found
+//	(nil, nil): not found
+//	(nil, error): server error
+func (db *Database) GetInvitedUserById(invitedUserId string) (*models.InvitedUser, error) {
 	var invitedUser models.InvitedUser
 
-	q := db.DB.Where("id = ?", userId).First(&invitedUser)
-
+	q := db.DB.Where("id = ?", invitedUserId).First(&invitedUser)
 	if q.Error == gorm.ErrRecordNotFound {
 		return nil, nil
 	} else if q.Error != nil {
@@ -60,13 +78,17 @@ func (db *Database) GetInvitedUserById(userId string) (*models.InvitedUser, erro
 	return &invitedUser, nil
 }
 
-// find user by given email
-// returns (nil, error) if server error, (nil, nil) if not found
+// GetUserByEmail queries the database for a User with the given email.
+//
+// Returns:
+//
+//	(*User, nil): found
+//	(nil, nil): not found
+//	(nil, error): server error
 func (db *Database) GetUserByEmail(email string) (*models.User, error) {
 	var user models.User
 
 	q := db.DB.Where("email = ?", email).First(&user)
-
 	if q.Error == gorm.ErrRecordNotFound {
 		return nil, nil
 	} else if q.Error != nil {
@@ -76,13 +98,17 @@ func (db *Database) GetUserByEmail(email string) (*models.User, error) {
 	return &user, nil
 }
 
-// find invited user by given email
-// returns (nil, error) if server error, (nil, nil) if not found
+// GetInvitedUserByEmail queries the database for an InvitedUser with the given email.
+//
+// Returns:
+//
+//	(*InvitedUser, nil): found
+//	(nil, nil): not found
+//	(nil, error): server error
 func (db *Database) GetInvitedUserByEmail(email string) (*models.InvitedUser, error) {
 	var invitedUser models.InvitedUser
 
 	q := db.DB.Where("email = ?", email).First(&invitedUser)
-
 	if q.Error == gorm.ErrRecordNotFound {
 		return nil, nil
 	} else if q.Error != nil {
@@ -92,10 +118,16 @@ func (db *Database) GetInvitedUserByEmail(email string) (*models.InvitedUser, er
 	return &invitedUser, nil
 }
 
-// get a user by their credentials
+// GetUserByCredentials queries the database for a User with the email in UserLogin
+// and validates the given password in UserLogin against the user's PasswordHash.
+//
+// Returns:
+//
+//	(*User, nil): found and valid credentials
+//	(nil, error): server error,
+//	(nil, nil): not found or user credentials are incorrect.
 func (db *Database) GetUserByCredentials(login *models.UserLogin) (*models.User, error) {
 	user, err := db.GetUserByEmail(login.Email)
-
 	if err != nil {
 		return nil, err
 	} else if user == nil {
@@ -109,12 +141,18 @@ func (db *Database) GetUserByCredentials(login *models.UserLogin) (*models.User,
 	return user, nil
 }
 
-// get an invited user by their credentials
+// GetInvitedUserByCredentials queries the database for an InvitedUser with the email in UserLogin
+// and validates the given password in UserLogin against the invited user's PasswordHash.
+//
+// Returns:
+//
+//	(*InvitedUser, nil): found and valid credentials
+//	(nil, error): server error,
+//	(nil, nil): not found or user credentials are incorrect.
 func (db *Database) GetInvitedUserByCredentials(
 	login *models.UserLogin,
 ) (*models.InvitedUser, error) {
 	invitedUser, err := db.GetInvitedUserByEmail(login.Email)
-
 	if err != nil {
 		return nil, err
 	} else if invitedUser == nil {
@@ -128,21 +166,37 @@ func (db *Database) GetInvitedUserByCredentials(
 	return invitedUser, nil
 }
 
-// get a count of users
+// GetUserCount queries the database and returns the number of Users.
+//
+// Returns:
+//
+//	(int, nil): found
+//	(0, error): server error.
 func (db *Database) GetUserCount() (int, error) {
 	q := db.DB.Find(&models.User{})
 	return int(q.RowsAffected), q.Error
 }
 
-// get a count of invited users
+// GetInvitedUserCount queries the database and returns the number of InvitedUsers.
+//
+// Returns:
+//
+//	(int, nil): count found
+//	(0, error): server error
 func (db *Database) GetInvitedGetUserCount() (int, error) {
 	q := db.DB.Find(&models.InvitedUser{})
 	return int(q.RowsAffected), q.Error
 }
 
-// create a new user and delete the invited user
+// RegisterUser creates a User and deletes an InvitedUser within a single transaction.
+// If either fails, the transaction is rolled back.
+//
+// Returns:
+//
+//	nil: success
+//	error: server error
 func (db *Database) RegisterUser(invitedUser *models.InvitedUser, user *models.User) error {
-	tx_err := db.DB.Transaction(func(tx *gorm.DB) error {
+	txErr := db.DB.Transaction(func(tx *gorm.DB) error {
 		if err := db.DB.Create(user).Error; err != nil {
 			return err
 		}
@@ -152,45 +206,54 @@ func (db *Database) RegisterUser(invitedUser *models.InvitedUser, user *models.U
 		return nil
 	})
 
-	return tx_err
+	return txErr
 }
 
-// create a new user
+// CreateUser creates a User.
+//
+// Returns:
+//
+//	nil: success
+//	error: server error
 func (db *Database) CreateUser(user *models.User) error {
-	if q := db.DB.Create(user); q.Error != nil {
-		return q.Error
-	}
-	return nil
+	q := db.DB.Create(user)
+	return q.Error
 }
 
-// create a new invited user
+// CreateInvitedUser creates an InvitedUser.
+// Returns nil if successful, error if server error.
 func (db *Database) CreateInvitedUser(invitedUser *models.InvitedUser) error {
-	if q := db.DB.Create(invitedUser); q.Error != nil {
-		return q.Error
-	}
-	return nil
+	q := db.DB.Create(invitedUser)
+	return q.Error
 }
 
-// update user
+// UpdateUser saves a given User.
+// Returns nil if successful, error if server error.
 func (db *Database) UpdateUser(user *models.User) error {
 	q := db.DB.Save(&user)
 	return q.Error
 }
 
-// update invited user
+// UpdateInvitedUser saves a given InvitedUser.
+// Returns nil if successful, error if server error.
 func (db *Database) UpdateInvitedUser(invitedUser *models.InvitedUser) error {
 	q := db.DB.Save(&invitedUser)
 	return q.Error
 }
 
-// update user's password
-// returns bool (valid credentials), bool (successful change), err (server error)
+// UpdateUserPassword gets a User by their credentials, validates their new password,
+// hashes the password, and updates the user's PasswordHash.
+//
+// Returns:
+//
+//	(true, true, nil): valid credentials and changed successfully
+//	(false, false, nil): invalid credentials
+//	(true, false, error): valid credentials but server error
 func (db *Database) UpdateUserPassword(
 	passwordChange *models.UserPasswordChange,
 ) (bool, bool, error) {
 	login := &models.UserLogin{Email: passwordChange.Email, Password: passwordChange.Password}
 	user, err := db.GetUserByCredentials(login)
-
 	if err != nil {
 		return false, false, err
 	} else if user == nil {
@@ -219,8 +282,15 @@ func (db *Database) UpdateUserPassword(
 	return true, true, nil
 }
 
-// reset invited user's password
-// returns bool (valid invited user), bool (successful change), err
+// ResetInvitedUserPassword gets an InvitedUser by the given email,
+// checks the validity of the password, hashes the password,
+// and updates the invited user's PasswordHash.
+//
+// Returns:
+//
+//	(true, true, nil): valid credentials and changed successfully
+//	(false, false, nil): invited user not found
+//	(true, false, error): valid credentials but server error
 func (db *Database) ResetInvitedUserPassword(newCredentials models.UserLogin) (bool, bool, error) {
 	invitedUser, err := db.GetInvitedUserByEmail(newCredentials.Email)
 
@@ -248,11 +318,17 @@ func (db *Database) ResetInvitedUserPassword(newCredentials models.UserLogin) (b
 	return true, true, nil
 }
 
-// reset user's password
-// returns bool (valid user), bool (successful change), err
+// ResetUserPassword gets an User by the given email,
+// checks the validity of the password, hashes the password,
+// and updates the user's PasswordHash.
+//
+// Returns:
+//
+//	(true, true, nil): valid credentials and changed successfully
+//	(false, false, nil): user not found
+//	(true, false, error): valid credentials but server error
 func (db *Database) ResetUserPassword(newCredentials models.UserLogin) (bool, bool, error) {
 	user, err := db.GetUserByEmail(newCredentials.Email)
-
 	if err != nil {
 		return false, false, err
 	} else if user == nil {
@@ -277,20 +353,36 @@ func (db *Database) ResetUserPassword(newCredentials models.UserLogin) (bool, bo
 	return true, true, nil
 }
 
-// delete user
+// DeleteUser deletes a given User from the database.
+//
+// Returns:
+//
+//	nil: success
+//	error: server error
 func (db *Database) DeleteUser(user *models.User) error {
 	q := db.DB.Delete(&user)
 	return q.Error
 }
 
-// delete invited user
+// DeleteInvitedUser deletes a given InvitedUser from the database.
+//
+// Returns:
+//
+//	nil: success
+//	error: server error
 func (db *Database) DeleteInvitedUser(invitedUser *models.InvitedUser) error {
 	q := db.DB.Delete(&invitedUser)
 	return q.Error
 }
 
-// check that the given email address has not been used by a User or InvitedUser
-// returns boolean for validation and error (in the case of other database error)
+// ValidateUniqueEmail checks that the given email has not been used by an
+// existing User or InvitedUser.
+//
+// Returns:
+//
+//	(true, nil): email is unique
+//	(false, nil): email is not unique
+//	(false, error): server error
 func (db *Database) ValidateUniqueEmail(email string) (bool, error) {
 	q1 := db.DB.Where("email = ?", email).First(&models.User{})
 	if q1.Error != gorm.ErrRecordNotFound {
@@ -313,18 +405,19 @@ func (db *Database) ValidateUniqueEmail(email string) (bool, error) {
 	return true, nil
 }
 
-// check that a given username has not been used by a User or InvitedUser
-// returns boolean for validation and error (in the case of other database error)
+// ValidateUniqueUsername checks that the given username has not been used by an
+// existing User.
+//
+// Returns:
+//
+//	(true, nil): username is unique
+//	(false, nil): username is not unique
+//	(false, error): server error
 func (db *Database) ValidateUniqueUsername(username string) (bool, error) {
 	q := db.DB.Where("username = ?", username).First(&models.User{})
-
-	if q.Error != gorm.ErrRecordNotFound {
-		if q.Error != nil {
-			return false, q.Error
-		} else {
-			return false, nil
-		}
+	if q.Error == gorm.ErrRecordNotFound {
+		return true, nil
+	} else {
+		return false, q.Error
 	}
-
-	return true, nil
 }

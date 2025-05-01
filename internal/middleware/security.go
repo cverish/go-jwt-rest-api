@@ -6,6 +6,8 @@ import (
 	"github.com/unrolled/secure"
 )
 
+// SecurityMiddleware adds various security headers to the response.
+// The nonce used in the Content-Security-Policy handler is added to the gin context as "csp_nonce".
 func SecurityMiddleware(isDev bool) gin.HandlerFunc {
 	opt := secure.Options{
 		ContentSecurityPolicy: "default-src 'self'; script-src $NONCE; object-src 'none';",

@@ -4,7 +4,7 @@ import (
 	"log"
 	"net/http"
 
-	_ "github.com/cverish/go-jwt-rest-api/docs"
+	// _ "github.com/cverish/go-jwt-rest-api/docs"
 	"github.com/cverish/go-jwt-rest-api/internal/config"
 	"github.com/cverish/go-jwt-rest-api/internal/database"
 	"github.com/cverish/go-jwt-rest-api/internal/handlers"

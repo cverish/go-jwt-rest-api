@@ -18,15 +18,19 @@ func NewUserHandler(db *database.Database) *UserHandler {
 	}
 }
 
-// Register godoc
-// @Summary register new user
-// @Tags registration
-// @Param registrationInfo body models.UserRegister true "Registration Information"
-// @Success 201 {object} StatusCreated "Successful Response"
-// @Failure 400 {object} StatusError "Status Bad Request"
-// @Failure 401 {object} StatusError "Status Unauthorized"
-// @Failure 500 {object} StatusError "Status Internal Server Error"
-// @Router /register [post]
+// Register takes in a gin context, binds the request body to a UserRegister object,
+// validates the credentials of the invited user, and creates a new user.
+//
+// Swagger doc autogeneration tags:
+//
+//	@Summary register new user
+//	@Tags registration
+//	@Param registrationInfo body models.UserRegister true "Registration Information"
+//	@Success 201 {object} StatusCreated "Successful Response"
+//	@Failure 400 {object} StatusError "Status Bad Request"
+//	@Failure 401 {object} StatusError "Status Unauthorized"
+//	@Failure 500 {object} StatusError "Status Internal Server Error"
+//	@Router /register [post]
 func (h *UserHandler) Register(c *gin.Context) {
 	var registrationInfo models.UserRegister
 
@@ -96,18 +100,22 @@ func (h *UserHandler) Register(c *gin.Context) {
 	models.ResponseCreated(c, "user registered successfully", createdUser.ID.String())
 }
 
-// GetUser godoc
-// @Summary get user information
-// @Tags users
-// @Param user_id path string true "User ID (uuid)"
-// @Success 200 {object} StatusOK "Successful Response"
-// @Failure 400 {object} StatusError "Status Bad Request"
-// @Failure 401 {object} StatusError "Status Unauthorized"
-// @Failure 403 {object} StatusError "Status Forbidden"
-// @Failure 404 {object} StatusError "Status Not Found"
-// @Failure 500 {object} StatusError "Status Internal Server Error"
-// @Security UserAccessCookie
-// @Router /users/{user_id} [get]
+// GetUser takes in a gin context, reads the user_id from the url params,
+// and returns the user.
+//
+// Swagger doc autogeneration tags:
+//
+//	@Summary get user information
+//	@Tags users
+//	@Param user_id path string true "User ID (uuid)"
+//	@Success 200 {object} StatusOKItem "Successful Response"
+//	@Failure 400 {object} StatusError "Status Bad Request"
+//	@Failure 401 {object} StatusError "Status Unauthorized"
+//	@Failure 403 {object} StatusError "Status Forbidden"
+//	@Failure 404 {object} StatusError "Status Not Found"
+//	@Failure 500 {object} StatusError "Status Internal Server Error"
+//	@Security UserAccessCookie
+//	@Router /users/{user_id} [get]
 func (h *UserHandler) GetUser(c *gin.Context) {
 	userId := c.Param("user_id")
 	// only allow a user to update themself, or an admin to view any user, by checking JWT
@@ -128,19 +136,23 @@ func (h *UserHandler) GetUser(c *gin.Context) {
 	models.ResponseOKItem(c, user)
 }
 
-// UpdateUser godoc
-// @Summary update user information
-// @Tags users
-// @Param user_id path string true "User ID (uuid)"
-// @Param user body models.User true "Updated user info"
-// @Success 200 {object} StatusOK "Successful Response"
-// @Failure 400 {object} StatusError "Status Bad Request"
-// @Failure 401 {object} StatusError "Status Unauthorized"
-// @Failure 403 {object} StatusError "Status Forbidden"
-// @Failure 404 {object} StatusError "Status Not Found"
-// @Failure 500 {object} StatusError "Status Internal Server Error"
-// @Security UserAccessCookie
-// @Router /users/{user_id} [put]
+// UpdateUser takes in a gin context, gets the user_id from the url params,
+// binds the request body to a User, and updates the user's information.
+//
+// Swagger doc autogeneration tags:
+//
+//	@Summary update user information
+//	@Tags users
+//	@Param user_id path string true "User ID (uuid)"
+//	@Param user body models.User true "Updated user info"
+//	@Success 200 {object} StatusOK "Successful Response"
+//	@Failure 400 {object} StatusError "Status Bad Request"
+//	@Failure 401 {object} StatusError "Status Unauthorized"
+//	@Failure 403 {object} StatusError "Status Forbidden"
+//	@Failure 404 {object} StatusError "Status Not Found"
+//	@Failure 500 {object} StatusError "Status Internal Server Error"
+//	@Security UserAccessCookie
+//	@Router /users/{user_id} [put]
 func (h *UserHandler) UpdateUser(c *gin.Context) {
 	userId := c.Param("user_id")
 

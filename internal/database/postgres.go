@@ -7,12 +7,18 @@ import (
 	"gorm.io/gorm"
 )
 
+// DB holds an instance of a gorm.DB object.
 var DB *gorm.DB
 
+// Database is a struct which points to a specific instance
+// of a gorm.DB object.
 type Database struct {
 	DB *gorm.DB
 }
 
+// NewDatabase takes in a DSN string and returns an instance of Database.
+// It opens the database via gorm with the postgres dialect, configures
+// the connection pool, and pings the database.
 func NewDatabase(dsn string) (*Database, error) {
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
