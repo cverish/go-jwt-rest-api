@@ -1,0 +1,13 @@
+.env
+.env.local
+.env.development
+.env.production
+
+swagger.json
+swagger.yaml
+
+/tmp
+/bin
+/.vscode
+
+.DS_Store
