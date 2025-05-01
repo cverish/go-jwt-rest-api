@@ -1,54 +1,49 @@
-## go-jwt-rest-api
+# go-jwt-rest-api
 
 a REST API for JWT authentication written in Go.
 
-## technologies
+## table of contents
 
-- application is developed in [Go](https://go.dev/) with:
-
-  - [GORM](https://gorm.io/): Database ORM
-  - [Gin Web Framework](https://gin-gonic.com/)
-
-- dev tools:
-  - [Docker](https://docs.docker.com/engine/install/): running local PostgreSQL database
-  - [Atlas](https://atlasgo.io/guides/orms/gorm): managing GORM migrations
-  - [air](https://github.com/air-verse/air): live reload
-  - [swag](https://github.com/swaggo/swag): auto-generate Swagger docs
-
-## dependencies
-
-- Docker and Docker Compose
-- Go v1.24.2
+- [usage](#usage)
+- [technologies](#technologies)
+- [dependencies](#dependencies)
+- [development](#development)
+  - [running the application](#running-the-application)
+  - [database migrations](#database-migrations)
+  - [testing](#testing)
+  - [linting](#linting)
+  - [swagger doc generation](#swagger-doc-generation)
+- [deployment](#deployment)
+- [final thoughts](#final-thoughts)
 
 ## usage
 
 This API is meant to be used as a boilerplate for a larger REST API.
-It contains routes for creating invitations, user registration, authentication, 
+It contains routes for creating invitations, user registration, authentication,
 and user modification/deletion.
 Access to routes is dependent on (a) authentication status and (b) role-based authorization.
 
 You'll first need to create an admin user using the `/api/v1/admin/manage/create-initial-admin` endpoint.
-You can then log in as the admin at `/api/v1/auth/login`.
 Once a user has been created, this endpoint will no longer allow for creation of an admin user.
+You can then log in as the admin at `/api/v1/auth/login`.
 
 To add new users, they must first be invited with the `/api/v1/admin/invites/create` endpoint.
 The admin user provides the invited user's email address and creates a temporary password.
 Using this email address and temporary password, the invited user can register at `/api/v1/register`.
-Once they have registered, they can sign in with their credentials at `/api/v1/auth/login`,
-and a new access token and refresh token will be sent to the client.
+Once they have registered, they can sign in with their credentials at `/api/v1/auth/login`.
 Logging out at `/api/v1/auth/logout` removes the access token and refresh token from the client.
 
-The location of access token refresh (backend or client) depends on the 
+The location of access token refresh (backend or client) depends on the
 `JWT_BACKEND_REFRESH` environment variable.
 
-- `true`: refresh will only occur in the [auth middleware](./internal/middleware/auth.go) 
+- `true`: refresh will only occur in the [auth middleware](./internal/middleware/auth.go)
   automatically via the refresh token.
-  When the token is refreshed, the database is queried to ensure that the user 
+  When the token is refreshed, the database is queried to ensure that the user
   is still authorized to access the API and to update their role.
   If authorized, a new access token will be sent to the client.
   When set, the `/api/v1/auth/refresh-token` endpoint returns a 404.
-  
-- `false`: refresh will only occur on the client side via the `/api/v1/auth/refresh-token` endpoint.
+- `false` (or any other value): refresh will only occur on the client side
+  via the `/api/v1/auth/refresh-token` endpoint.
   If the user is no longer authorized, their refresh token will be revoked.
 
 User role endpoints include getting and updating their user profile data.
@@ -56,24 +51,44 @@ User role endpoints include getting and updating their user profile data.
 Admin role endpoints include invite viewing, creation, deletion, and password reset;
 user viewing, creation, deletion, and password reset;
 as well as elevating or downgrading a user to/from admin status.
-Admin status is verified via the database every time a `/api/v1/admin/*` route is called 
+Admin status is verified via the database every time a `/api/v1/admin/*` route is called
 to ensure that admin authorization has not been revoked.
 If it has, the user is logged out and will have to log back in.
 
+## technologies
+
+- application is developed in [Go](https://go.dev/) with:
+
+  - [GORM](https://gorm.io/): Database ORM
+  - [Gin Web Framework](https://gin-gonic.com/): serving the API
+
+- dev tools:
+  - [Docker](https://docs.docker.com/engine/install/): running local PostgreSQL database
+  - [Atlas](https://atlasgo.io/guides/orms/gorm): managing GORM migrations
+  - [air](https://github.com/air-verse/air): live reload in dev
+  - [swag](https://github.com/swaggo/swag): auto-generate Swagger docs
+
+## dependencies
+
+- Docker and Docker Compose
+- Go v1.24.2
+
 ## development
+
+### running the application
 
 Run `make env` to copy the contents of `.env.template` into `.env` and update values as desired.
 
 > [!WARNING]
-> You'll need to go in to the generated `.env` file and replace the placeholder JWT secret keys 
->with ones generated by `make generate-secret-key`.
+> You'll need to go in to the generated `.env` file and replace the placeholder JWT secret keys
+> with ones generated by `make generate-secret-key`.
 
-Once your `.env` is set up, run `make` to download the necessary go packages, 
-build and start a PostgreSQL Docker container, migrate the PostgreSQL database, 
+Once your `.env` is set up, run `make` to download the necessary go packages,
+build and start a PostgreSQL Docker container, migrate the PostgreSQL database,
 and build the application.
 
 The main application code is in [`./cmd/go-jwt-rest-api/`](./cmd/go-jwt-rest-api/main.go).
-Here, the config is loaded from environment variables, a database connection is established, 
+Here, the config is loaded from environment variables, a database connection is established,
 and the API is served on the given port (default `:8080`).
 
 To run the application locally, run `make runserver`.
@@ -82,11 +97,15 @@ This will build the Swagger docs and serve the API on
 (with the docs at [/api/v1/docs/](http://localhost:8080/api/v1/docs)).
 Running the app via `make runserver` allows for live reload on save.
 If you want to speed up the rebuild process, or add more build targets,
-modify the `make build` command in the Makefile.
+modify the `make build` command in the Makefile
+(for example, you may not wish to rebuild the Swagger docs on save).
 
-When interacting with the API from the Swagger docs, the JWTs will be added to the session cookies upon successful login with `/api/v1/auth/login`.
+When interacting with the API from the Swagger docs,
+the JWTs will be added to the session cookies upon successful login with `/api/v1/auth/login`.
+No further authentication within Swagger is needed,
+and your tokens will persist across sessions.
 
-## database migrations
+### database migrations
 
 Database migrations are handled via Atlas.
 If you add new database models, you will need to add the models to
@@ -102,33 +121,35 @@ To downgrade the database, run `make db-downgrade`.
 This will migrate back by one migration.
 You may need to delete or modify data in your database to do this.
 
-If you make a migration, and then wish to change the migration,
+If you generate a migration, and then wish to change the migration,
 downgrade to the version prior to your migration, then delete the migrations you wish to amend.
 Once you've made the changes to your models, run `make db-makemigrations` and `make db-upgrade`.
 
 > [!NOTE]
-> Atlas for GORM does not play nicely with PostgreSQL `enum` types, unfortunately.
+> Atlas for GORM does not play nicely with PostgreSQL `enum` types.
 > I spent a bit of time trying to manually write an initial database migration
 > that would create the `Role` enum type in the PostgreSQL database to no avail;
 > it wasn't very important for my purposes so I abandoned it.
+> Atlas does have documentation on their site for
+> (manual migrations)[https://atlasgo.io/versioned/new]
 >
 > You can still define your structs with enums,
 > but you should probably set the gorm struct field tag to a primitive type.
 > In my case, I used `gorm:"type:string;default:'user'"`.
 
-## testing
+### testing
 
 Some of the tests are currently broken.
 I need to set up my tests to spin up a test environment so I can finish out unit and integration tests.
 This is a fast follow!
 
-## linting
+### linting
 
 Go does most of the linting one could ever want out of the box;
 however, I'm picky about breaking up long lines, so I added `golines`.
 Run it with `make lint`.
 
-## swagger doc generation
+### swagger doc generation
 
 The general API annotations can be found in
 [./internal/handlers/docs.go](./internal/handlers/docs.go),
@@ -168,10 +189,10 @@ JWTs obviously have a lot of flaws, including the inability to revoke tokens fro
 I wouldn't use this method of authentication for anything super important.
 I developed this API as boilerplate to use in another, larger application,
 which is intended for use by trusted individuals only.
-To mitigate some of this risk, the cookies are set as `HTTPOnly` and `Secure` 
+To mitigate some of this risk, the cookies are set as `HTTPOnly` and `Secure`
 (when not in local development)
 and the `Domain` attribute is set via environment variable (in local dev, `localhost`).
 Additionally, authorization is checked at the time of token refresh,
 which gives revoked users a limited amount of time on the platform before they are booted.
-All admin routes require validation of the user's role each time they are called;
+All admin routes require validation of the user's role in the database each time they are called;
 the small performance hit is worth the additional security in my opinion.
